@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> Search for elective course classroom </title>
+
+<style>
+body{font-family:Arial;margin:10px;padding:0;background:#f8f8f8}
+.container{max-width:400px;margin:0 auto;background:#fff;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.1);display:flex;flex-direction:column;gap:8px}
+h2{text-align:center;color:#333;margin-bottom:10px}
+input,button{width:100%;box-sizing:border-box;font-size:16px;padding:10px;border-radius:6px;border:1px solid #ccc}
+button{background:#007bff;color:#fff;border:none;cursor:pointer}
+button:hover{background:#0056b3}
+#result{margin-top:15px;font-size:18px;color:#555;white-space:pre-line}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h2>
+   <span style="display:block; font-size:20px; color:#333;">
+    2026年7月期の選択科目クラス検索 
+  </span>
+   <br>                           
+   
+  <span style="display:block; font-size:20px; color:#333;">
+    学籍番号
+  </span>
+  <span style="display:block; font-size:20px; color:#333;">
+    Student ID
+  </span>
+  <span style="display:block; font-size:20px; color:#333;">
+    学号
+  </span>
+</h2>
+
+<input type="text" id="test_id" placeholder="Please enter your Student ID.">
+<button onclick="searchStudent()">検索 / Search</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+// 只保留 id 索引
+let studentMap = {};
+
+// 加载数据
+async function loadData(){
+    try{
+        const res = await fetch('elective_classroom.json'); // json数据
+        const arr = await res.json();
+
+        arr.forEach(s => {
+            studentMap[s.id] = s;
+        });
+
+    }catch(e){
+        document.getElementById('result').innerText='Try again';
+    }
+}
+
+// 查询
+function searchStudent(){
+    const input = document.getElementById('test_id').value.trim();
+
+    if(!input){
+        document.getElementById('result').innerText='Please enter your application number.';
+        return;
+    }
+
+    const student = studentMap[input];
+
+    if(student){
+        document.getElementById('result').innerText =
+`Student ID：${student.id}
+Level：${student.level}
+Classroom：${student.classroom}
+School Building：${student.schoolbuilding}
+Class Time：${student.classtime}`;
+    }else{
+        document.getElementById('result').innerText=' No results found. ';
+    }
+}
+
+// 初始化
+loadData();
+
+</script>
+
+</body>
+</html>
